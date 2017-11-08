@@ -6,7 +6,7 @@ namespace RPI_I2C{
     TLC59116::TLC59116(){
         std::string i2c_dev = "/dev/i2c-1";
         i2c.open_I2C(0x60, i2c_dev);
-        usleep(5000);   //Sleep 5ms
+        usleep(5000);  //Sleep 5ms
         reset_leds();
         operate_normal_mode();
         enable_all_leds();
