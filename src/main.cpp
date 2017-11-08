@@ -91,7 +91,7 @@ int main (void){
     usleep(500000);
     tlc59116.reset_leds();
 
-    thumper.set_address("http://192.168.1.103:3000");
+    thumper.set_address("http://192.168.1.103:3000/");
     thumper.drive_forward();
     keepReadingKey = true;
     std::thread thread2(read_keys);

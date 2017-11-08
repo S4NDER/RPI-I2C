@@ -11,6 +11,7 @@ namespace RPI_I2C{
     void Thumper::set_address(std::string address){
         this->address = address;
         this->post_drive = address + "speed";
+        std::cout << post_drive << '\n';
     }
 
     void Thumper::drive_forward(void){
