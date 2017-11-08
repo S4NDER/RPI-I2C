@@ -25,17 +25,16 @@ namespace RPI_I2C{
         std::cout << (int) buffer[0] << '\n';
     }
 
-    std::string QT1070::getKeyPAD(){
+    enum QT1070::Keypads QT1070::getKeyPAD(){
         int key = giveKey();
         switch (key) {
-            case UP: return "UP";
-            case DOWN: return "DOWN";
-            case LEFT: return "LEFT";
-            case RIGHT: return "RIGHT";
-            case X: return "X";
-            case A: return "A";
-            case B: return "B";
-            default: return " ";
+            case UP: return UP;
+            case DOWN: return DOWN;
+            case LEFT: return LEFT;
+            case RIGHT: return RIGHT;
+            case X: return X;
+            case A: return A;
+            case B: return B;
         }
     }
 

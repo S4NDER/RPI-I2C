@@ -8,6 +8,7 @@
 #include "TLC59116.h"
 #include "Led.h"
 #include "Effects.h"
+#include "Thumper.h"
 
 using namespace RPI_I2C;
 
@@ -15,6 +16,7 @@ Led ledArray[5];
 I2C i2c;
 TLC59116 tlc59116;
 QT1070 qt1070;
+Thumper thumper;
 
 volatile bool keepFading = false;
 volatile bool keepReadingKey = false;
@@ -72,17 +74,15 @@ void cycleRGB(){
 }
 
 void read_keys(){
-    std::string previous_key_state=" ";
-    std::string current_key_state = " ";
     while (keepReadingKey) {
-        current_key_state = qt1070.getKeyPAD();
-        if(current_key_state != " "){
-            if (current_key_state != previous_key_state) {
-                std::cout << current_key_state << '\n';
+        int current_key_state = qt1070.getKeyPAD();
+            switch (current_key_state) {
+                case QT1070::UP : thumper.drive_forward(); break;
+                case QT1070::DOWN : thumper.drive_backward(); break;
+                case QT1070::LEFT : thumper.drive_left(); break;
+                case QT1070::RIGHT : thumper.drive_right(); break;
             }
         }
-        previous_key_state = current_key_state;
-    }
 }
 
 int main (void){
@@ -91,6 +91,11 @@ int main (void){
     usleep(500000);
     tlc59116.reset_leds();
 
+    thumper.set_address("http://192.168.1.103:3000");
+    thumper.drive_forward();
+    keepReadingKey = true;
+    std::thread thread2(read_keys);
+/*
     for (size_t i = 0; i < 5; i++) {
         ledArray[i] = Led();
     }
@@ -108,6 +113,8 @@ int main (void){
         tlc59116.turn_of_led_number_x(i+1);
     }
 
+
+
     keepFading = true;
     keepReadingKey = true;
 
@@ -120,6 +127,8 @@ int main (void){
     keepReadingKey = false;
 
     thread1.join();
+    thread2.join();
+    */
     thread2.join();
 
     return 0;
