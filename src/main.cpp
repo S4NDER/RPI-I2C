@@ -21,7 +21,7 @@ I2C i2c;
 TLC59116 tlc59116;
 QT1070 qt1070;
 Effects effects;
-int effect_type = 0;
+//int effect_type = 0;
 Thumper thumper;
 
 volatile bool keepFading = false;
@@ -38,12 +38,7 @@ void effects_manager(){
             if (!keepAlive) {
                 break;
             }
-            switch (effect_type) {
-                case 0: effects.cycle_RGB(ledArray, &tlc59116); break;
-                case 1: effects.running_light(ledArray, &tlc59116); break;
-                case 2: effects.blink_light(ledArray, &tlc59116); break;
-                case 3: effects.glow_light(ledArray, &tlc59116); break;
-            }
+            effects.keepAlive();
 
         }
     }
@@ -65,11 +60,9 @@ void read_keys(){
                                     usleep(touchDelay);
                                     std::cout << keepFading << '\n';
                                     break;
-                case QT1070::B :    if (effect_type < 3){
-                                        effect_type++;
-                                    } else {effect_type = 0;}
-                                    usleep(touchDelay);
-                                    std::cout << "effect_type"<<effect_type << '\n';
+                case QT1070::B :    usleep(touchDelay);
+                                    effects.next_effect();
+                                    std::cout << "next effect" << '\n';
                 break;
             }
         }
@@ -86,6 +79,8 @@ int main (void){
     }
 
     thumper.set_address("http://192.168.1.103:3000/");
+    effects.set_effects_controller(&tlc59116);
+    effects.set_effects_led_array(&ledArray);
     keepReadingKey = true;
     keepAlive = true;
 
