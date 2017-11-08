@@ -59,7 +59,7 @@ namespace RPI_I2C{
             i2c.write_I2C(2, buffer);
     }
 
-    void TLC59116::turn_of_led_number_x(int led_id){
+    void TLC59116::turn_off_led_number_x(int led_id){
             led_id -= 1;
 
             buffer[0] = 0x02 + led_id * 3;

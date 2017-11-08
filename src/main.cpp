@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <unistd.h>
 #include <thread>
+#include <vector>
 
 #include "I2C.h"
 #include "QT1070.h"
@@ -12,11 +13,15 @@
 
 using namespace RPI_I2C;
 
-Led ledArray[5];
+int touchDelay = 250000;    //The delay for the toggle buttons A and B
+int led_count = 5;
+
+std::vector<Led> ledArray;
 I2C i2c;
 TLC59116 tlc59116;
 QT1070 qt1070;
 Effects effects;
+int effect_type = 0;
 Thumper thumper;
 
 volatile bool keepFading = false;
@@ -24,7 +29,7 @@ volatile bool keepReadingKey = false;
 volatile bool keepAlive = false;
 
 
-void cycleRGB(){
+void effects_manager(){
     while (keepAlive) {
         if (!keepAlive) {
             break;
@@ -33,7 +38,13 @@ void cycleRGB(){
             if (!keepAlive) {
                 break;
             }
-            effects.cycle_RGB(ledArray, &tlc59116);
+            switch (effect_type) {
+                case 0: effects.cycle_RGB(ledArray, &tlc59116); break;
+                case 1: effects.running_light(ledArray, &tlc59116); break;
+                case 2: effects.blink_light(ledArray, &tlc59116); break;
+                case 3: effects.glow_light(ledArray, &tlc59116); break;
+            }
+
         }
     }
 }
@@ -41,6 +52,7 @@ void cycleRGB(){
 void read_keys(){
     while (keepReadingKey) {
         int current_key_state = qt1070.getKeyPAD();
+
             switch (current_key_state) {
                 case QT1070::UP : thumper.drive_forward(); break;
                 case QT1070::DOWN : thumper.drive_backward(); break;
@@ -50,9 +62,15 @@ void read_keys(){
                                     keepAlive = false;
                                     break;
                 case QT1070::A :    keepFading = !keepFading;
-                                    usleep(150000);
+                                    usleep(touchDelay);
                                     std::cout << keepFading << '\n';
                                     break;
+                case QT1070::B :    if (effect_type < 3){
+                                        effect_type++;
+                                    } else {effect_type = 0;}
+                                    usleep(touchDelay);
+                                    std::cout << "effect_type"<<effect_type << '\n';
+                break;
             }
         }
 }
@@ -63,11 +81,15 @@ int main (void){
     usleep(500000);
     tlc59116.reset_leds();
 
+    for (int i = 0; i < led_count; i++) {
+        ledArray.push_back(Led());
+    }
+
     thumper.set_address("http://192.168.1.103:3000/");
     keepReadingKey = true;
     keepAlive = true;
 
-    std::thread thread1(cycleRGB);
+    std::thread thread1(effects_manager);
     std::thread thread2(read_keys);
 /*
     for (size_t i = 0; i < 5; i++) {
@@ -84,7 +106,7 @@ int main (void){
     for (size_t i = 0; i < 5; i++) {
         tlc59116.turn_on_led_number_x(i+1, ledArray[i]);
         usleep(300000);
-        tlc59116.turn_of_led_number_x(i+1);
+        tlc59116.turn_off_led_number_x(i+1);
     }
     */
     thread1.join();

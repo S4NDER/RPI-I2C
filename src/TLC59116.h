@@ -20,7 +20,7 @@ namespace RPI_I2C{
         void reset_leds(void);
         void turn_on_all_leds(void);
         void turn_on_led_number_x(int led_id, Led led);
-        void turn_of_led_number_x(int led_id);
+        void turn_off_led_number_x(int led_id);
 
     private:
         I2C i2c;
