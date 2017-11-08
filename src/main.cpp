@@ -20,15 +20,20 @@ Thumper thumper;
 
 volatile bool keepFading = false;
 volatile bool keepReadingKey = false;
+volatile bool keepAlive = false;
 
 void cycleRGB(){
+
     int red =0;
     int green =0;
     int blue = 0;
-    while (keepFading) {
+    while (keepAlive) {
+        if (!keepAlive) {
+            break;
+        }
+        while (keepFading) {
 
-        if (keepFading == false) {
-            std::cout << "keepfading is false" << '\n';
+        if (keepAlive == false) {
             break;
         }
 
@@ -71,6 +76,9 @@ void cycleRGB(){
             }
         }
     }
+        /* code */
+    }
+
 }
 
 void read_keys(){
@@ -81,6 +89,12 @@ void read_keys(){
                 case QT1070::DOWN : thumper.drive_backward(); break;
                 case QT1070::LEFT : thumper.drive_left(); break;
                 case QT1070::RIGHT : thumper.drive_right(); break;
+                case QT1070::X :    keepReadingKey = false;
+                                    keepAlive = false;
+                                    break;
+                case QT1070::A :    keepFading = !keepFading;
+                                    usleep(150000);
+                                    break;
             }
         }
 }
@@ -92,8 +106,10 @@ int main (void){
     tlc59116.reset_leds();
 
     thumper.set_address("http://192.168.1.103:3000/");
-    thumper.drive_forward();
     keepReadingKey = true;
+    keepAlive = true;
+
+    std::thread thread1(cycleRGB);
     std::thread thread2(read_keys);
 /*
     for (size_t i = 0; i < 5; i++) {
@@ -129,6 +145,7 @@ int main (void){
     thread1.join();
     thread2.join();
     */
+    thread1.join();
     thread2.join();
 
     return 0;
