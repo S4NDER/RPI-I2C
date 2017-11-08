@@ -16,69 +16,26 @@ Led ledArray[5];
 I2C i2c;
 TLC59116 tlc59116;
 QT1070 qt1070;
+Effects effects;
 Thumper thumper;
 
 volatile bool keepFading = false;
 volatile bool keepReadingKey = false;
 volatile bool keepAlive = false;
 
-void cycleRGB(){
 
-    int red =0;
-    int green =0;
-    int blue = 0;
+void cycleRGB(){
     while (keepAlive) {
         if (!keepAlive) {
             break;
         }
         while (keepFading) {
-
-        if (keepAlive == false) {
-            break;
-        }
-
-        for (red = 0; red <= 255; red++) {
-            for (size_t i = 0; i < 5; i++) {
-                ledArray[i].setLedColor(Color(red, green, blue));
-                tlc59116.turn_on_led_number_x(i+1, ledArray[i]);
+            if (!keepAlive) {
+                break;
             }
-            if(red == 255){
-                red = 255;
-            }
-        }
-
-        for (green = 0; green <= 255; green++) {
-            red--;
-            for (size_t i = 0; i < 5; i++) {
-                ledArray[i].setLedColor(Color(red, green, blue));
-                tlc59116.turn_on_led_number_x(i+1, ledArray[i]);
-            }
-
-            if(green == 255){
-                green = 255;
-            }
-        }
-
-        for (blue = 0; blue <= 255; blue++) {
-            green --;
-            for (size_t i = 0; i < 5; i++) {
-                ledArray[i].setLedColor(Color(red, green, blue));
-                tlc59116.turn_on_led_number_x(i+1, ledArray[i]);
-            }
-        }
-
-        for (size_t i = 0; i < 255; i++) {
-            blue--;
-            red++;
-            for (size_t i = 0; i < 5; i++) {
-                ledArray[i].setLedColor(Color(red, green, blue));
-                tlc59116.turn_on_led_number_x(i+1, ledArray[i]);
-            }
+            effects.cycle_RGB(ledArray, &tlc59116);
         }
     }
-        /* code */
-    }
-
 }
 
 void read_keys(){
@@ -94,6 +51,7 @@ void read_keys(){
                                     break;
                 case QT1070::A :    keepFading = !keepFading;
                                     usleep(150000);
+                                    std::cout << keepFading << '\n';
                                     break;
             }
         }
@@ -128,22 +86,6 @@ int main (void){
         usleep(300000);
         tlc59116.turn_of_led_number_x(i+1);
     }
-
-
-
-    keepFading = true;
-    keepReadingKey = true;
-
-    std::thread thread1(cycleRGB);
-    std::thread thread2(read_keys);
-
-    usleep(10000000);
-
-    keepFading = false;
-    keepReadingKey = false;
-
-    thread1.join();
-    thread2.join();
     */
     thread1.join();
     thread2.join();
