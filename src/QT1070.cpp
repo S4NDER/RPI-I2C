@@ -7,7 +7,6 @@
 namespace RPI_I2C{
 
     QT1070::QT1070(){
-        buffer[2];
         std::string i2c_dev = "/dev/i2c-1";
         i2c.open_I2C(0x1B, i2c_dev);
         usleep(5000);   //Sleep 5ms
@@ -22,7 +21,6 @@ namespace RPI_I2C{
     }
 
     int QT1070::getVendor(){
-        buffer[2];
         i2c.read_I2C(1, buffer );
         std::cout << (int) buffer[0] << '\n';
     }

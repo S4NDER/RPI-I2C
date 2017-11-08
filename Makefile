@@ -1,39 +1,35 @@
-# This C++ compiler
-PREFIX=/home/sander/rpi-tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf-
-CC=$(PREFIX)g++
+# The compiler to use
+# CCPREFIX=/home/bioboost/rpi-tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf-
+CC=$(CCPREFIX)g++
 
+# Compiler flags
+CFLAGS=-c -Wall -std=c++11
+	# -c: Compile or assemble the source files, but do not link. The linking stage simply is not done. The ultimate output is in the form of an object file for each source file.
+	# -Wall: This enables all the warnings about constructions that some users consider questionable, and that are easy to avoid (or modify to prevent the warning), even in conjunction with macros.
 
-LIBS= -lpthread
-# The compiler flags
-CFLAGS=-Wall -c -std=c++11
+# LDFLAGS=
 
-EXECUTABLE=RPI_I2C
+# Libraries
+LIBS=-lrestclient-cpp -lpthread
 
-all: $(EXECUTABLE)
+# Name of executable output
+TARGET=touchshield
+SRCDIR=src
+BUILDDIR=bin
 
-$(EXECUTABLE): main.o I2C.o QT1070.o TLC59116.o Color.o Led.o Effects.o
-	$(CC) main.o I2C.o QT1070.o TLC59116.o Color.o Led.o Effects.o -o $(EXECUTABLE) $(LIBS)
+OBJS := $(patsubst %.cpp,%.o,$(shell find $(SRCDIR) -name '*.cpp'))
 
-main.o: main.cpp
-	$(CC) $(CFLAGS) main.cpp
+all: makebuildir $(TARGET)
 
-I2C.o: lib/I2C.cpp
-	$(CC) $(CFLAGS) lib/I2C.cpp
+$(TARGET) : $(OBJS)
+	$(CC) $(LDFLAGS) -o $(BUILDDIR)/$@ $(OBJS) $(LIBS)
 
-QT1070.o: lib/QT1070.cpp
-	$(CC) $(CFLAGS) lib/QT1070.cpp
-
-TLC59116.o: lib/TLC59116.cpp
-	$(CC) $(CFLAGS) lib/TLC59116.cpp
-
-Color.o: lib/Color.cpp
-	$(CC) $(CFLAGS) lib/Color.cpp
-
-Led.o: lib/Led.cpp
-	$(CC) $(CFLAGS) lib/Led.cpp
-
-Effects.o: lib/Effects.cpp
-	$(CC) $(CFLAGS) lib/Effects.cpp
+%.o: %.cpp
+	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -f *.o $(EXECUTABLE)
+	rm -rf $(BUILDDIR)
+	rm -f $(OBJS)
+
+makebuildir:
+	mkdir -p $(BUILDDIR)

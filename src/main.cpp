@@ -3,11 +3,11 @@
 #include <unistd.h>
 #include <thread>
 
-#include "lib/I2C.h"
-#include "lib/QT1070.h"
-#include "lib/TLC59116.h"
-#include "lib/Led.h"
-#include "lib/Effects.h"
+#include "I2C.h"
+#include "QT1070.h"
+#include "TLC59116.h"
+#include "Led.h"
+#include "Effects.h"
 
 using namespace RPI_I2C;
 
