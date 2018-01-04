@@ -55,4 +55,14 @@ namespace RPI_I2C{
         std::cout << "Driving right" << '\n';
         RestClient::Response r = RestClient::post(post_drive, "application/json", j.dump());
     }
+
+    void Thumper::stop(void){
+        nlohmann::json j ={
+            {"left_speed", 0},
+            {"right_speed", 0}
+        };
+
+        std::cout << "Stopping" << '\n';
+        RestClient::Response r = RestClient::post(post_drive, "application/json", j.dump());
+    }
 };

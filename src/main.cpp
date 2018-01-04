@@ -53,8 +53,13 @@ void read_keys(){
                 case QT1070::DOWN : thumper.drive_backward(); break;
                 case QT1070::LEFT : thumper.drive_left(); break;
                 case QT1070::RIGHT : thumper.drive_right(); break;
-                case QT1070::X :    keepReadingKey = false;
+                case QT1070::X :    for (int i = 0; i < 5; i++) {
+                                        thumper.stop();
+                                        usleep(20000);
+                                    }
                                     keepAlive = false;
+                                    keepReadingKey = false;
+
                                     break;
                 case QT1070::A :    keepFading = !keepFading;
                                     usleep(touchDelay);
@@ -77,8 +82,10 @@ int main (void){
     for (int i = 0; i < led_count; i++) {
         ledArray.push_back(Led());
     }
-
-    thumper.set_address("http://192.168.1.103:3000/");
+    std::string thumperAddress;
+    std::cout << "Enter the IP address of the thumper without the port or http, only the address" << std::endl;
+    std::cin >> thumperAddress;
+    thumper.set_address("http://" + thumperAddress + ":3000/");
     effects.set_effects_controller(&tlc59116);
     effects.set_effects_led_array(&ledArray);
     keepReadingKey = true;
@@ -86,24 +93,7 @@ int main (void){
 
     std::thread thread1(effects_manager);
     std::thread thread2(read_keys);
-/*
-    for (size_t i = 0; i < 5; i++) {
-        ledArray[i] = Led();
-    }
 
-
-    ledArray[0].setLedColor(Color(Color::RED));
-    ledArray[1].setLedColor(Color(Color::GREEN));
-    ledArray[2].setLedColor(Color(Color::BLUE));
-    ledArray[3].setLedColor(Color(Color::WHITE));
-    ledArray[4].setLedColor(Color(Color::MAGENTA));
-
-    for (size_t i = 0; i < 5; i++) {
-        tlc59116.turn_on_led_number_x(i+1, ledArray[i]);
-        usleep(300000);
-        tlc59116.turn_off_led_number_x(i+1);
-    }
-    */
     thread1.join();
     thread2.join();
 

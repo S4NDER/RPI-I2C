@@ -14,6 +14,7 @@ namespace RPI_I2C{
       void drive_left(void);
       void drive_right(void);
       void set_address(std::string address);
+      void stop(void);
 
   private:
       std::string address;
