@@ -57,9 +57,6 @@ void read_keys(){
                                         thumper.stop();
                                         usleep(20000);
                                     }
-                                    keepAlive = false;
-                                    keepReadingKey = false;
-
                                     break;
                 case QT1070::A :    keepFading = !keepFading;
                                     usleep(touchDelay);
