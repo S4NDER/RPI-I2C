@@ -46,6 +46,7 @@ namespace RPI_I2C{
         usleep(5000);   //Sleep 5ms
         i2c.read_I2C(1, buffer);
 
+        std::cout << (int)buffer[0] << std::endl;
         return (int)buffer[0];
     }
 

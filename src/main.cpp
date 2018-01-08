@@ -51,11 +51,11 @@ void read_keys(){
             switch (current_key_state) {
                 case QT1070::UP : thumper.drive_forward(); break;
                 case QT1070::DOWN : thumper.drive_backward(); break;
-                case QT1070::LEFT : thumper.drive_left(); break;
-                case QT1070::RIGHT : thumper.drive_right(); break;
+                case QT1070::LEFT : thumper.drive_right(); break;
+                case QT1070::RIGHT : thumper.drive_left(); break;
                 case QT1070::X :    for (int i = 0; i < 5; i++) {
                                         thumper.stop();
-                                        usleep(20000);
+                                        usleep(50000);
                                     }
                                     break;
                 case QT1070::A :    keepFading = !keepFading;
@@ -66,6 +66,7 @@ void read_keys(){
                                     effects.next_effect();
                                     std::cout << "next effect" << '\n';
                 break;
+                default: thumper.stop(); break;
             }
         }
 }

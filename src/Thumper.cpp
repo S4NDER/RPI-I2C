@@ -1,6 +1,6 @@
 #include "Thumper.h"
 #include "json.hpp"
-
+#include <unistd.h>
 
 namespace RPI_I2C{
 
@@ -22,7 +22,7 @@ namespace RPI_I2C{
 
         std::cout << "Driving forward" << '\n';
         RestClient::Response r = RestClient::post(post_drive, "application/json", j.dump());
-
+        usleep(50000);
     }
 
     void Thumper::drive_backward(void){
@@ -33,6 +33,7 @@ namespace RPI_I2C{
 
         std::cout << "Driving backward" << '\n';
         RestClient::Response r = RestClient::post(post_drive, "application/json", j.dump());
+        usleep(50000);
     }
 
     void Thumper::drive_left(void){
@@ -43,7 +44,7 @@ namespace RPI_I2C{
 
         std::cout << "Driving left" << '\n';
         RestClient::Response r = RestClient::post(post_drive, "application/json", j.dump());
-
+        usleep(50000);
     }
 
     void Thumper::drive_right(void){
@@ -54,6 +55,7 @@ namespace RPI_I2C{
 
         std::cout << "Driving right" << '\n';
         RestClient::Response r = RestClient::post(post_drive, "application/json", j.dump());
+        usleep(50000);
     }
 
     void Thumper::stop(void){
